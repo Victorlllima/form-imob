@@ -231,8 +231,8 @@ function initFileUpload() {
     dropZone.dataset.initialized = 'true';
 
     // Garante que a lista global seja um array
-    if (!Array.isArray(window.uploadedFilesList)) {
-        window.uploadedFilesList = [];
+    if (!Array.isArray(window.uploadedFiles)) {
+        window.uploadedFiles = [];
     }
 
     console.log('✅ initFileUpload: Initializing...', { dropZone, fileInput });
@@ -278,7 +278,7 @@ function initFileUpload() {
         const maxSize = 10 * 1024 * 1024; // 10MB
 
         // Use a local let that explicitly refers to the global list to be safe
-        let currentList = window.uploadedFilesList;
+        let currentList = window.uploadedFiles;
         if (!Array.isArray(currentList)) currentList = [];
 
         Array.from(newFiles).forEach(file => {
@@ -293,14 +293,14 @@ function initFileUpload() {
             currentList.push(file);
         });
 
-        window.uploadedFilesList = currentList;
+        window.uploadedFiles = currentList;
         renderFiles();
     }
 
     function renderFiles() {
         if (!uploadedFilesContainer) return;
 
-        const currentList = window.uploadedFilesList || [];
+        const currentList = window.uploadedFiles || [];
 
         uploadedFilesContainer.innerHTML = currentList.map((file, index) => `
             <div class="file-tag" style="display: inline-flex; align-items: center; gap: 8px; background: #f3f4f6; padding: 4px 12px; border-radius: 16px; margin: 4px; font-size: 0.9em; color: #333; border: 1px solid #ddd;">
@@ -314,8 +314,8 @@ function initFileUpload() {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const index = parseInt(e.target.dataset.index);
-                if (window.uploadedFilesList[index]) {
-                    window.uploadedFilesList.splice(index, 1);
+                if (window.uploadedFiles[index]) {
+                    window.uploadedFiles.splice(index, 1);
                     renderFiles();
                 }
             });
@@ -679,29 +679,80 @@ function initFormSubmission() {
     });
 }
 
+/* ============================================
+   Lógica de Upload + Envio ao Banco
+   ============================================ */
+
+// Função Auxiliar para subir arquivos
+async function uploadFilesToStorage(supabase) {
+    const files = window.uploadedFiles || [];
+    const uploadedLinks = [];
+
+    if (files.length === 0) return [];
+
+    console.log(`📡 Iniciando upload de ${files.length} arquivos para 'benchmarking-files'...`);
+
+    for (const file of files) {
+        try {
+            // Limpa o nome do arquivo para evitar erros de URL
+            const cleanName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+            const filePath = `benchmarking/${Date.now()}_${cleanName}`;
+
+            // Upload
+            const { data, error } = await supabase.storage
+                .from('benchmarking-files')
+                .upload(filePath, file);
+
+            if (error) {
+                console.warn(`Erro no upload de ${file.name}:`, error.message);
+                continue; // Pula para o próximo
+            }
+
+            // Pega URL Pública
+            const { data: publicData } = supabase.storage
+                .from('benchmarking-files')
+                .getPublicUrl(filePath);
+
+            if (publicData) {
+                uploadedLinks.push({
+                    name: file.name,
+                    url: publicData.publicUrl,
+                    type: file.type
+                });
+            }
+
+        } catch (err) {
+            console.error(`Falha crítica no arquivo ${file.name}:`, err);
+        }
+    }
+
+    return uploadedLinks;
+}
+
+// Função Principal de Envio
 async function submitToSupabase(formData) {
-    // ⚠️ CRUCIAL: Usa a função exportada no config.js para pegar o cliente já inicializado
     const supabase = typeof getSupabaseClient === 'function' ? getSupabaseClient() : null;
 
     if (!supabase) {
         throw new Error('Supabase client not initialized');
     }
 
-    // 1. Upload files if any
-    let benchmarkingFileUrls = [];
-    if (window.uploadedFilesList && window.uploadedFilesList.length > 0) {
-        showLoading(true, 'Fazendo upload dos arquivos...');
-        benchmarkingFileUrls = await uploadFiles(supabase, window.uploadedFilesList);
+    // 1. FAZ O UPLOAD DOS ARQUIVOS PRIMEIRO
+    let uploadedFilesData = [];
+    try {
+        uploadedFilesData = await uploadFilesToStorage(supabase);
+    } catch (uploadError) {
+        console.error('Erro no processo de upload:', uploadError);
+        // Não impedimos o envio do formulário, apenas logamos o erro
     }
 
-    // Map form data to database columns (English schema)
+    // 2. PREPARA O PAYLOAD (Com os links dos arquivos)
     const payload = {
         // Section 1: Identity & UX
         tone_of_voice: formData.toneOfVoice || null,
         typing_indicator: formData.typingIndicator || false,
         read_receipts: formData.readReceipts || false,
         use_emojis: formData.useEmojis || false,
-        benchmarking_files: benchmarkingFileUrls, // URLs do Storage
 
         // Section 2: Management & Intervention
         manual_intervention: formData.manualIntervention || false,
@@ -716,6 +767,10 @@ async function submitToSupabase(formData) {
         price_max: formData.priceMax || null,
         triggers: formData.triggers || [],
         other_triggers: formData.outrosGatilhos || null,
+
+        // --- NOVO CAMPO DE ARQUIVOS ---
+        benchmarking_files: uploadedFilesData,
+        // ------------------------------
 
         // Section 4: Follow-up
         followup_attempts: formData.followupAttempts || 3,
@@ -736,7 +791,7 @@ async function submitToSupabase(formData) {
         created_at: new Date().toISOString()
     };
 
-    console.log('Submitting to Supabase:', payload);
+    console.log('Enviando para o Supabase:', payload);
 
     const { data, error } = await supabase
         .from('onboarding_config')
@@ -744,43 +799,12 @@ async function submitToSupabase(formData) {
         .select();
 
     if (error) {
-        console.error('Supabase error:', error);
+        console.error('Erro no Supabase:', error);
         throw new Error(error.message);
     }
 
-    console.log('Successfully saved to Supabase:', data);
+    console.log('Salvo com sucesso:', data);
     return data;
-}
-
-/**
- * Helper to upload multiple files to Supabase Storage
- */
-async function uploadFiles(supabase, files) {
-    const uploadPromises = files.map(async (file) => {
-        // Create a unique file name/path
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-        const filePath = `benchmarking/${fileName}`;
-
-        // Upload to 'benchmarking-files' bucket
-        const { data, error } = await supabase.storage
-            .from('benchmarking-files')
-            .upload(filePath, file);
-
-        if (error) {
-            console.error('Upload error:', error);
-            throw new Error(`Erro ao subir arquivo ${file.name}: ${error.message}`);
-        }
-
-        // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-            .from('benchmarking-files')
-            .getPublicUrl(filePath);
-
-        return publicUrl;
-    });
-
-    return Promise.all(uploadPromises);
 }
 
 function collectFormData() {

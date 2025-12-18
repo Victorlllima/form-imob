@@ -213,17 +213,23 @@ function initFileUpload() {
     const dropZone = document.getElementById('fileDropZone');
     const fileInput = document.getElementById('fileInput');
     const uploadedFiles = document.getElementById('uploadedFiles');
-    const files = [];
+    // Usa referência global ou inicia nova
+    const files = window.uploadedFiles || [];
 
     if (!dropZone || !fileInput) return;
 
-    // Click to upload
-    dropZone.addEventListener('click', () => fileInput.click());
+    // FIX: Força o clique no input oculto
+    dropZone.onclick = function (e) {
+        if (e.target !== fileInput && !e.target.classList.contains('remove-file')) {
+            fileInput.click();
+        }
+    };
 
-    // Drag events
+    // Drag events visuais
     ['dragenter', 'dragover'].forEach(eventName => {
         dropZone.addEventListener(eventName, (e) => {
             e.preventDefault();
+            e.stopPropagation();
             dropZone.classList.add('dragover');
         });
     });
@@ -231,6 +237,7 @@ function initFileUpload() {
     ['dragleave', 'drop'].forEach(eventName => {
         dropZone.addEventListener(eventName, (e) => {
             e.preventDefault();
+            e.stopPropagation();
             dropZone.classList.remove('dragover');
         });
     });
@@ -243,52 +250,50 @@ function initFileUpload() {
 
     // Handle file input change
     fileInput.addEventListener('change', (e) => {
-        handleFiles(e.target.files);
+        if (fileInput.files.length > 0) {
+            handleFiles(fileInput.files);
+        }
     });
 
     function handleFiles(newFiles) {
         const maxSize = 10 * 1024 * 1024; // 10MB
-        const allowedTypes = ['.txt', '.pdf', '.doc', '.docx'];
 
         Array.from(newFiles).forEach(file => {
-            // Check size
             if (file.size > maxSize) {
-                showNotification(`${file.name} excede o tamanho máximo de 10MB`, 'error');
+                showNotification(`${file.name} excede 10MB`, 'error');
                 return;
             }
-
-            // Check type
-            const extension = '.' + file.name.split('.').pop().toLowerCase();
-            if (!allowedTypes.includes(extension)) {
-                showNotification(`${file.name} não é um tipo de arquivo suportado`, 'error');
-                return;
-            }
-
-            // Add file
             files.push(file);
-            renderFiles();
         });
+
+        renderFiles();
+        // Atualiza variável global para o envio do formulário
+        window.uploadedFiles = files;
     }
 
     function renderFiles() {
+        if (!uploadedFiles) return;
+
         uploadedFiles.innerHTML = files.map((file, index) => `
-            <div class="file-tag">
+            <div class="file-tag" style="display: inline-flex; align-items: center; gap: 8px; background: #f3f4f6; padding: 4px 12px; border-radius: 16px; margin: 4px; font-size: 0.9em;">
                 <span>📄 ${file.name}</span>
-                <button type="button" class="remove-file" data-index="${index}">×</button>
+                <button type="button" class="remove-file" data-index="${index}" style="border:none; background:none; cursor:pointer; font-weight:bold; color: #666;">×</button>
             </div>
         `).join('');
 
-        // Add remove handlers
+        // Re-adiciona eventos de remover (com stopPropagation para não abrir o upload)
         uploadedFiles.querySelectorAll('.remove-file').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const index = parseInt(e.target.dataset.index);
                 files.splice(index, 1);
                 renderFiles();
+                window.uploadedFiles = files;
             });
         });
     }
 
-    // Store files reference for form submission
+    // Inicializa
     window.uploadedFiles = files;
 }
 

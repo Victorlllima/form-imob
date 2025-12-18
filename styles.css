@@ -1943,3 +1943,32 @@ body::before {
     font-size: 1.125rem;
     line-height: 1.6;
 }
+
+/* Estilo para quando o card é selecionado */
+.select-card {
+    border: 2px solid transparent;
+    /* Reserva espaço para a borda */
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.select-card.selected {
+    border-color: #6366f1;
+    /* Cor Roxo Indigo (ajuste para a cor da sua marca) */
+    background-color: rgba(99, 102, 241, 0.1);
+    /* Fundo levemente roxo */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+/* Garante que o input de arquivo esteja invisível mas exista */
+#fileInput {
+    display: none;
+}
+
+/* Garante que a zona de drop seja clicável */
+#fileDropZone {
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}

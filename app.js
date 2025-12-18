@@ -825,14 +825,13 @@ function collectFormData() {
    Modal Functions
    ============================================ */
 function showSuccessModal() {
-    // Hide the form and show success page
-    const form = document.getElementById('onboardingForm');
-    const logoHeader = document.querySelector('.logo-header');
-    const appContainer = document.querySelector('.app-container');
+    // Hide the main content area and show success page
+    const mainContent = document.querySelector('.main-content');
     const successPage = document.getElementById('successPage');
+    const progressContainer = document.querySelector('.progress-container');
 
-    if (form) form.style.display = 'none';
-    if (appContainer) appContainer.style.display = 'none';
+    if (mainContent) mainContent.style.display = 'none';
+    if (progressContainer) progressContainer.style.display = 'none';
     if (successPage) successPage.style.display = 'flex';
 }
 

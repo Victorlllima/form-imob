@@ -687,6 +687,13 @@ async function submitToSupabase(formData) {
         throw new Error('Supabase client not initialized');
     }
 
+    // 1. Upload files if any
+    let benchmarkingFileUrls = [];
+    if (window.uploadedFilesList && window.uploadedFilesList.length > 0) {
+        showLoading(true, 'Fazendo upload dos arquivos...');
+        benchmarkingFileUrls = await uploadFiles(supabase, window.uploadedFilesList);
+    }
+
     // Map form data to database columns (English schema)
     const payload = {
         // Section 1: Identity & UX
@@ -694,6 +701,7 @@ async function submitToSupabase(formData) {
         typing_indicator: formData.typingIndicator || false,
         read_receipts: formData.readReceipts || false,
         use_emojis: formData.useEmojis || false,
+        benchmarking_files: benchmarkingFileUrls, // URLs do Storage
 
         // Section 2: Management & Intervention
         manual_intervention: formData.manualIntervention || false,
@@ -742,6 +750,37 @@ async function submitToSupabase(formData) {
 
     console.log('Successfully saved to Supabase:', data);
     return data;
+}
+
+/**
+ * Helper to upload multiple files to Supabase Storage
+ */
+async function uploadFiles(supabase, files) {
+    const uploadPromises = files.map(async (file) => {
+        // Create a unique file name/path
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const filePath = `benchmarking/${fileName}`;
+
+        // Upload to 'benchmarking-files' bucket
+        const { data, error } = await supabase.storage
+            .from('benchmarking-files')
+            .upload(filePath, file);
+
+        if (error) {
+            console.error('Upload error:', error);
+            throw new Error(`Erro ao subir arquivo ${file.name}: ${error.message}`);
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+            .from('benchmarking-files')
+            .getPublicUrl(filePath);
+
+        return publicUrl;
+    });
+
+    return Promise.all(uploadPromises);
 }
 
 function collectFormData() {
@@ -854,8 +893,14 @@ function closeErrorModal() {
     modal.classList.remove('active');
 }
 
-function showLoading(show) {
+function showLoading(show, message = 'Salvando configurações...') {
     const overlay = document.getElementById('loadingOverlay');
+    const loadingMessage = overlay.querySelector('p');
+
+    if (loadingMessage) {
+        loadingMessage.textContent = message;
+    }
+
     if (show) {
         overlay.classList.add('active');
     } else {

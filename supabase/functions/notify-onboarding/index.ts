@@ -12,46 +12,46 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
 interface OnboardingRecord {
-    id: string
-    created_at: string
-    tone_of_voice: string
-    whatsapp_notificacao: string
-    email_agenda: string
+  id: string
+  created_at: string
+  tone_of_voice: string
+  whatsapp_notificacao: string
+  email_agenda: string
 }
 
 serve(async (req) => {
-    // Handle CORS
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+  // Handle CORS
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
 
-    try {
-        const payload = await req.json()
-        const record = payload.record as OnboardingRecord
+  try {
+    const payload = await req.json()
+    const record = payload.record as OnboardingRecord
 
-        // Recipients
-        const recipients = [
-            'victorlllima@gmail.com',
-            'netolimapereira2015@gmail.com'
-        ]
+    // Recipients
+    const recipients = [
+      'victorlllima@gmail.com',
+      'netolimapereira2015@gmail.com'
+    ]
 
-        // Send email using Resend (recommended for Supabase)
-        const emailResponse = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${RESEND_API_KEY}`,
-            },
-            body: JSON.stringify({
-                from: 'Onboarding System <onboarding@seu-dominio.com>',
-                to: recipients,
-                subject: '🔔 Novo preenchimento de onboarding recebido',
-                html: `
+    // Send email using Resend (recommended for Supabase)
+    const emailResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'Onboarding System <onboarding@resend.dev>',
+        to: recipients,
+        subject: '🔔 Novo preenchimento de onboarding recebido',
+        html: `
           <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
               <h1 style="color: #6366f1; margin: 0;">Novo Onboarding Recebido!</h1>
@@ -100,37 +100,37 @@ serve(async (req) => {
             </p>
           </div>
         `,
-            }),
-        })
+      }),
+    })
 
-        if (!emailResponse.ok) {
-            const errorData = await emailResponse.text()
-            console.error('Email send error:', errorData)
-            throw new Error(`Failed to send email: ${errorData}`)
-        }
-
-        const result = await emailResponse.json()
-        console.log('Email sent successfully:', result)
-
-        return new Response(
-            JSON.stringify({ success: true, message: 'Notification sent', result }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-
-    } catch (error) {
-        console.error('Error:', error)
-        return new Response(
-            JSON.stringify({ error: error.message }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.text()
+      console.error('Email send error:', errorData)
+      throw new Error(`Failed to send email: ${errorData}`)
     }
+
+    const result = await emailResponse.json()
+    console.log('Email sent successfully:', result)
+
+    return new Response(
+      JSON.stringify({ success: true, message: 'Notification sent', result }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
 })
 
 function formatPhone(phone: string): string {
-    if (!phone) return '-'
-    const cleaned = phone.replace(/\D/g, '')
-    if (cleaned.length === 11) {
-        return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`
-    }
-    return phone
+  if (!phone) return '-'
+  const cleaned = phone.replace(/\D/g, '')
+  if (cleaned.length === 11) {
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`
+  }
+  return phone
 }

@@ -318,6 +318,18 @@ body::before {
     font-size: 1.25rem;
 }
 
+.required-badge {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: var(--danger);
+    color: white;
+    letter-spacing: 0.05em;
+    margin-left: auto;
+}
+
 .form-hint {
     color: var(--text-secondary);
     font-size: 0.875rem;
@@ -411,9 +423,8 @@ body::before {
 .card-content-compact p {
     font-size: 0.75rem;
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    line-height: 1.4;
 }
 
 /* ============================================
@@ -1894,4 +1905,41 @@ body::before {
 ::selection {
     background: var(--primary);
     color: white;
+}
+
+/* ============================================
+   Success Page (Full page replacement)
+   ============================================ */
+.success-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    animation: fadeSlideIn 0.5s ease forwards;
+}
+
+.success-page-content {
+    text-align: center;
+    padding: var(--spacing-3xl);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(20px);
+    max-width: 500px;
+}
+
+.success-page-content h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    background: linear-gradient(135deg, var(--text-primary), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.success-page-content p {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    line-height: 1.6;
 }

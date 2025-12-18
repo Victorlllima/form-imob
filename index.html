@@ -126,7 +126,8 @@
                             <span class="label-icon">📁</span>
                             Benchmarking de Estilo
                         </label>
-                        <p class="form-hint">Faça upload de conversas reais para que a IA aprenda seu padrão de escrita
+                        <p class="form-hint">Exporte no seu WhatsApp e faça upload das suas melhores conversas para que
+                            a IA aprenda seu padrão de atendimento e estilo de escrita.
                         </p>
                         <div class="file-upload-zone" id="fileDropZone">
                             <div class="upload-icon">
@@ -208,6 +209,19 @@
                         <p class="form-hint">Informe o e-mail vinculado à sua agenda</p>
                         <input type="email" name="emailAgenda" class="text-input full-width"
                             placeholder="seu-email@exemplo.com">
+                    </div>
+
+                    <!-- WhatsApp Notification Field (Required) -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">📱</span>
+                            WhatsApp para Notificações
+                            <span class="required-badge">Obrigatório</span>
+                        </label>
+                        <p class="form-hint">Qual número de WhatsApp deve ser notificado quando o atendimento humano for
+                            solicitado?</p>
+                        <input type="tel" name="whatsappNotificacao" id="whatsappNotificacao"
+                            class="text-input full-width" placeholder="(00) 00000-0000" required>
                     </div>
                 </section>
 
@@ -614,14 +628,27 @@
                     </button>
                     <button type="submit" class="nav-btn submit-btn" id="submitBtn" style="display: none;">
                         <span class="btn-text">Finalizar Configuração</span>
-                        <span class="btn-icon">🚀</span>
                     </button>
                 </div>
 
             </form>
         </main>
 
-        <!-- Success Modal -->
+        <!-- Success Message (replaces form on success) -->
+        <div class="success-page" id="successPage" style="display: none;">
+            <div class="success-page-content">
+                <div class="success-animation">
+                    <svg class="checkmark" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                    </svg>
+                </div>
+                <h2>Dados Recebidos!</h2>
+                <p>Seus dados foram recebidos e serão avaliados.</p>
+            </div>
+        </div>
+
+        <!-- Success Modal (hidden, keeping for compatibility) -->
         <div class="modal-overlay" id="successModal">
             <div class="modal-content">
                 <div class="success-animation">
@@ -630,9 +657,9 @@
                         <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
                     </svg>
                 </div>
-                <h2>Configuração Concluída!</h2>
-                <p>Seu Agente IA está pronto para começar a trabalhar.</p>
-                <button type="button" class="modal-btn" onclick="closeModal()">Acessar Dashboard</button>
+                <h2>Dados Recebidos!</h2>
+                <p>Seus dados foram recebidos e serão avaliados.</p>
+                <button type="button" class="modal-btn" onclick="closeModal()">Fechar</button>
             </div>
         </div>
 

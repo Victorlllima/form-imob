@@ -20,6 +20,7 @@ function initializeApp() {
     initFileUpload();
     initTagInput();
     initPriceFormatting();
+    initPhoneMask();
     initSlider();
     initKanbanBoard();
     initProgressSteps();
@@ -400,6 +401,47 @@ function parseCurrency(value) {
 }
 
 /* ============================================
+   Phone Mask (XX) XXXXX-XXXX
+   ============================================ */
+function initPhoneMask() {
+    const phoneInput = document.getElementById('whatsappNotificacao');
+
+    if (!phoneInput) return;
+
+    phoneInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+
+        // Limit to 11 digits
+        value = value.substring(0, 11);
+
+        // Apply mask
+        if (value.length > 0) {
+            value = '(' + value;
+        }
+        if (value.length > 3) {
+            value = value.substring(0, 3) + ') ' + value.substring(3);
+        }
+        if (value.length > 10) {
+            value = value.substring(0, 10) + '-' + value.substring(10);
+        }
+
+        e.target.value = value;
+    });
+
+    // Prevent non-numeric input
+    phoneInput.addEventListener('keypress', (e) => {
+        if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+            e.preventDefault();
+        }
+    });
+}
+
+function parsePhone(value) {
+    if (!value) return null;
+    return value.replace(/\D/g, '') || null;
+}
+
+/* ============================================
    Slider
    ============================================ */
 function initSlider() {
@@ -623,6 +665,7 @@ async function submitToSupabase(formData) {
         return_command: formData.returnCommand || null,
         auto_scheduling: formData.autoScheduling || false,
         email_agenda: formData.emailAgenda || null,
+        whatsapp_notificacao: formData.whatsappNotificacao || null,
 
         // Section 3: Qualification & Overflow
         neighborhoods: formData.neighborhoods || [],
@@ -721,6 +764,10 @@ function collectFormData() {
     const emailAgenda = form.querySelector('input[name="emailAgenda"]');
     if (emailAgenda) data.emailAgenda = emailAgenda.value || null;
 
+    // WhatsApp Notification
+    const whatsappInput = document.getElementById('whatsappNotificacao');
+    if (whatsappInput) data.whatsappNotificacao = parsePhone(whatsappInput.value);
+
     // Kanban columns order (as JSONB array)
     const columns = document.querySelectorAll('.kanban-column');
     data.pipelineStages = Array.from(columns).map((col, index) => {
@@ -744,16 +791,20 @@ function collectFormData() {
    Modal Functions
    ============================================ */
 function showSuccessModal() {
-    const modal = document.getElementById('successModal');
-    modal.classList.add('active');
+    // Hide the form and show success page
+    const form = document.getElementById('onboardingForm');
+    const logoHeader = document.querySelector('.logo-header');
+    const appContainer = document.querySelector('.app-container');
+    const successPage = document.getElementById('successPage');
+
+    if (form) form.style.display = 'none';
+    if (appContainer) appContainer.style.display = 'none';
+    if (successPage) successPage.style.display = 'flex';
 }
 
 function closeModal() {
     const modal = document.getElementById('successModal');
     modal.classList.remove('active');
-
-    // Optionally reset form or redirect
-    // window.location.href = '/dashboard';
 }
 
 function showErrorModal(message) {

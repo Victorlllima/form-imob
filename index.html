@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Onboarding Estratégico - Configure seu Agente IA & CRM Imobiliário de forma personalizada">
+    <title>Onboarding | Agente IA & CRM Imobiliário</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Logo Header -->
+    <div class="logo-header">
+        <img src="public/images/Logo.png" alt="Logo" class="main-logo">
+    </div>
+
+    <div class="app-container">
+        <!-- Header with Logo -->
+        <header class="header" style="display: none;"></header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <form id="onboardingForm" class="onboarding-form">
+
+                <!-- Progress Indicator -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <span class="step active" data-step="1">1</span>
+                        <span class="step" data-step="2">2</span>
+                        <span class="step" data-step="3">3</span>
+                        <span class="step" data-step="4">4</span>
+                        <span class="step" data-step="5">5</span>
+                        <span class="step" data-step="6">6</span>
+                    </div>
+                </div>
+
+                <!-- Section 1: Identity & UX -->
+                <section class="form-section active" id="section1">
+                    <div class="section-header">
+                        <span class="section-number">01</span>
+                        <h2 class="section-title">Identidade e UX do Agente</h2>
+                        <p class="section-subtitle">Configure como a IA irá interagir com seus leads no WhatsApp</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">💬</span>
+                            Como a IA deve interagir com seus leads?
+                        </label>
+                        <div class="card-select card-select-compact" id="toneOfVoice">
+                            <div class="select-card select-card-compact" data-value="formal">
+                                <div class="card-icon-small">👔</div>
+                                <div class="card-content-compact">
+                                    <h4>Formal</h4>
+                                    <p>Profissional e corporativo</p>
+                                </div>
+                            </div>
+                            <div class="select-card select-card-compact" data-value="friendly">
+                                <div class="card-icon-small">🤝</div>
+                                <div class="card-content-compact">
+                                    <h4>Amigável</h4>
+                                    <p>Acolhedor e consultivo</p>
+                                </div>
+                            </div>
+                            <div class="select-card select-card-compact" data-value="casual">
+                                <div class="card-icon-small">😊</div>
+                                <div class="card-content-compact">
+                                    <h4>Descontraído</h4>
+                                    <p>Leve e informal</p>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="toneOfVoice" id="toneOfVoiceInput">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">✨</span>
+                            Humanização do Atendimento
+                        </label>
+                        <div class="toggle-group">
+                            <div class="toggle-item">
+                                <div class="toggle-info">
+                                    <h4>Exibir "Digitando..."</h4>
+                                    <p>Simula digitação antes das respostas</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="typingIndicator">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-item">
+                                <div class="toggle-info">
+                                    <h4>Marcar como lido</h4>
+                                    <p>Marca mensagens como lidas automaticamente</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="readReceipts">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-item">
+                                <div class="toggle-info">
+                                    <h4>Utilizar emojis</h4>
+                                    <p>A IA pode usar emojis nas conversas</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="useEmojis">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">📁</span>
+                            Benchmarking de Estilo
+                        </label>
+                        <p class="form-hint">Faça upload de conversas reais para que a IA aprenda seu padrão de escrita
+                        </p>
+                        <div class="file-upload-zone" id="fileDropZone">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                            </div>
+                            <p class="upload-text">Arraste arquivos aqui ou <span class="upload-link">clique para
+                                    selecionar</span></p>
+                            <p class="upload-hint">Suportado: TXT, PDF, DOC (máx. 10MB)</p>
+                            <input type="file" id="fileInput" multiple accept=".txt,.pdf,.doc,.docx" hidden>
+                        </div>
+                        <div class="uploaded-files" id="uploadedFiles"></div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Management & Intervention -->
+                <section class="form-section" id="section2">
+                    <div class="section-header">
+                        <span class="section-number">02</span>
+                        <h2 class="section-title">Gestão e Intervenção</h2>
+                        <p class="section-subtitle">Defina como você poderá intervir nas conversas</p>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="toggle-item featured">
+                            <div class="toggle-info">
+                                <h4>
+                                    <span class="label-icon">🎯</span>
+                                    Intervenção Manual
+                                </h4>
+                                <p>Você deseja poder intervir e assumir a conversa manualmente a qualquer momento?</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="manualIntervention" id="manualIntervention">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Conditional: Return Command (only shows when manualIntervention is ON) -->
+                    <div class="form-group conditional-field" id="returnCommandGroup" style="display: none;">
+                        <label class="form-label">
+                            <span class="label-icon">🔑</span>
+                            Comando de Retomada
+                        </label>
+                        <p class="form-hint">Ao finalizar a intervenção escolha um comando para devolver o atendimento à
+                            IA. (Ex.: /fim, /voltar, /IA)</p>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">/</span>
+                            <input type="text" name="returnCommand" class="text-input" placeholder="voltar" value="">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="toggle-item featured">
+                            <div class="toggle-info">
+                                <h4>
+                                    <span class="label-icon">📅</span>
+                                    Agendamento Automático
+                                </h4>
+                                <p>A IA deve realizar agendamentos diretamente na sua agenda?</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="autoScheduling" id="autoScheduling">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Conditional: Email Agenda (only shows when autoScheduling is ON) -->
+                    <div class="form-group conditional-field" id="emailAgendaGroup" style="display: none;">
+                        <label class="form-label">
+                            <span class="label-icon">📧</span>
+                            E-mail da Agenda
+                        </label>
+                        <p class="form-hint">Informe o e-mail vinculado à sua agenda</p>
+                        <input type="email" name="emailAgenda" class="text-input full-width"
+                            placeholder="seu-email@exemplo.com">
+                    </div>
+                </section>
+
+                <!-- Section 3: Technical Qualification -->
+                <section class="form-section" id="section3">
+                    <div class="section-header">
+                        <span class="section-number">03</span>
+                        <h2 class="section-title">Qualificação Técnica e Transbordo</h2>
+                        <p class="section-subtitle">Configure os critérios de captação e situações de transferência</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">📍</span>
+                            Critérios de Captação (Filtro IA)
+                        </label>
+                        <p class="form-hint">Para captar um imóvel, quais os requisitos mínimos que a IA deve validar
+                            antes de te chamar?</p>
+
+                        <div class="criteria-grid">
+                            <div class="criteria-item">
+                                <label class="criteria-label">Localização (Bairros)</label>
+                                <div class="tag-input-container" id="neighborhoodTags">
+                                    <div class="tags-wrapper">
+                                        <input type="text" class="tag-input" placeholder="Digite e pressione Enter..."
+                                            id="neighborhoodInput">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="criteria-item">
+                                <label class="criteria-label">Faixa de Preço</label>
+                                <div class="price-range">
+                                    <div class="price-input-group">
+                                        <span class="currency">R$</span>
+                                        <input type="text" name="priceMin" class="number-input" placeholder="Mínimo"
+                                            id="priceMin">
+                                    </div>
+                                    <span class="range-separator">até</span>
+                                    <div class="price-input-group">
+                                        <span class="currency">R$</span>
+                                        <input type="text" name="priceMax" class="number-input" placeholder="Máximo"
+                                            id="priceMax">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">⚡</span>
+                            Gatilhos de Transbordo
+                        </label>
+                        <p class="form-hint">Em quais situações a IA deve transferir o atendimento para você
+                            imediatamente?</p>
+
+                        <div class="checkbox-grid">
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="triggers[]" value="human_request">
+                                <span class="checkbox-custom"></span>
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">👤</span>
+                                    <span class="checkbox-text">Pedido de falar com humano</span>
+                                </div>
+                            </label>
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="triggers[]" value="exchange_interest">
+                                <span class="checkbox-custom"></span>
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">🔄</span>
+                                    <span class="checkbox-text">Interesse em Permuta</span>
+                                </div>
+                            </label>
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="triggers[]" value="scheduling_request">
+                                <span class="checkbox-custom"></span>
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">📆</span>
+                                    <span class="checkbox-text">Agendamento solicitado</span>
+                                </div>
+                            </label>
+                            <label class="checkbox-card">
+                                <input type="checkbox" name="triggers[]" value="complex_question">
+                                <span class="checkbox-custom"></span>
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">❓</span>
+                                    <span class="checkbox-text">Dúvida técnica complexa</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- New: Other Triggers Text Field -->
+                        <div class="form-group-inline">
+                            <label class="form-label-small">
+                                <span class="label-icon">📝</span>
+                                Outros
+                            </label>
+                            <input type="text" name="outrosGatilhos" class="text-input full-width"
+                                placeholder="Descreva outros gatilhos de transbordo...">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Follow-up Strategy -->
+                <section class="form-section" id="section4">
+                    <div class="section-header">
+                        <span class="section-number">04</span>
+                        <h2 class="section-title">Estratégia de Follow-up</h2>
+                        <p class="section-subtitle">Configure a cadência de acompanhamento dos leads</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">🔄</span>
+                            Frequência de Follow-up
+                        </label>
+                        <p class="form-hint">Quantas tentativas de follow-up a IA deve fazer após o vácuo do cliente?
+                        </p>
+
+                        <div class="slider-container">
+                            <input type="range" name="followupAttempts" min="1" max="5" value="3" class="styled-slider"
+                                id="followupSlider">
+                            <div class="slider-labels">
+                                <span>1</span>
+                                <span>2</span>
+                                <span>3</span>
+                                <span>4</span>
+                                <span>5</span>
+                            </div>
+                            <div class="slider-value">
+                                <span id="sliderValue">3</span> tentativas
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">⏱️</span>
+                            Velocidade por Tipo de Lead
+                        </label>
+                        <p class="form-hint">Defina o tempo de espera para o primeiro follow-up</p>
+
+                        <div class="lead-timing-grid">
+                            <div class="timing-card">
+                                <div class="timing-header">
+                                    <span class="timing-icon hot">🔥</span>
+                                    <h4>Leads Quentes</h4>
+                                    <p>Campanhas ativas</p>
+                                </div>
+                                <select name="hotLeadTiming" class="styled-select">
+                                    <option value="5min">5 minutos</option>
+                                    <option value="15min" selected>15 minutos</option>
+                                    <option value="30min">30 minutos</option>
+                                    <option value="1h">1 hora</option>
+                                    <option value="2h">2 horas</option>
+                                </select>
+                            </div>
+                            <div class="timing-card">
+                                <div class="timing-header">
+                                    <span class="timing-icon warm">💼</span>
+                                    <h4>Leads de Indicação</h4>
+                                    <p>Indicações e gerais</p>
+                                </div>
+                                <select name="warmLeadTiming" class="styled-select">
+                                    <option value="1day" selected>1 dia</option>
+                                    <option value="2days">2 dias</option>
+                                    <option value="3days">3 dias</option>
+                                    <option value="1week">1 semana</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New: Additional Info Text Field -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">💡</span>
+                            Informações Adicionais
+                        </label>
+                        <p class="form-hint">Alguma informação extra sobre sua estratégia de follow-up?</p>
+                        <textarea name="infoAdicionalFollowup" class="text-area" rows="3"
+                            placeholder="Ex: Não enviar mensagens aos domingos, preferência por horários comerciais..."></textarea>
+                    </div>
+                </section>
+
+                <!-- Section 5: CRM Pipeline -->
+                <section class="form-section" id="section5">
+                    <div class="section-header">
+                        <span class="section-number">05</span>
+                        <h2 class="section-title">Configuração de Pipeline</h2>
+                        <p class="section-subtitle">Esta é a sugestão de fluxo para seu CRM. Você pode editar os títulos
+                            clicando neles e movimentar as colunas para a ordem que quiser. A IA pode movimentar os
+                            leads automaticamente entre esses estágios ou você prefere fazer manualmente?</p>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="kanban-container" id="kanbanBoard">
+                            <div class="kanban-column glass" data-column-id="1" draggable="true">
+                                <div class="column-header">
+                                    <input type="text" class="column-title" value="Lead Novo" data-original="Lead Novo">
+                                    <span class="column-badge">Entrada</span>
+                                    <button type="button" class="column-delete" title="Remover coluna">×</button>
+                                </div>
+                                <div class="column-description">Entrada via campanha</div>
+                                <div class="column-drag-handle">⋮⋮</div>
+                            </div>
+                            <div class="kanban-column glass" data-column-id="2" draggable="true">
+                                <div class="column-header">
+                                    <input type="text" class="column-title" value="Em Qualificação"
+                                        data-original="Em Qualificação">
+                                    <span class="column-badge ai">IA</span>
+                                    <button type="button" class="column-delete" title="Remover coluna">×</button>
+                                </div>
+                                <div class="column-description">IA atuando</div>
+                                <div class="column-drag-handle">⋮⋮</div>
+                            </div>
+                            <div class="kanban-column glass" data-column-id="3" draggable="true">
+                                <div class="column-header">
+                                    <input type="text" class="column-title" value="Agendado" data-original="Agendado">
+                                    <button type="button" class="column-delete" title="Remover coluna">×</button>
+                                </div>
+                                <div class="column-description">Visita marcada</div>
+                                <div class="column-drag-handle">⋮⋮</div>
+                            </div>
+                            <div class="kanban-column glass" data-column-id="4" draggable="true">
+                                <div class="column-header">
+                                    <input type="text" class="column-title" value="Visita Realizada"
+                                        data-original="Visita Realizada">
+                                    <button type="button" class="column-delete" title="Remover coluna">×</button>
+                                </div>
+                                <div class="column-description">Pós-visita</div>
+                                <div class="column-drag-handle">⋮⋮</div>
+                            </div>
+                            <div class="kanban-column glass" data-column-id="5" draggable="true">
+                                <div class="column-header">
+                                    <input type="text" class="column-title" value="Proposta/Negociação"
+                                        data-original="Proposta/Negociação">
+                                    <button type="button" class="column-delete" title="Remover coluna">×</button>
+                                </div>
+                                <div class="column-description">Análise de permutas/valores</div>
+                                <div class="column-drag-handle">⋮⋮</div>
+                            </div>
+                            <div class="kanban-column glass" data-column-id="6" draggable="true">
+                                <div class="column-header">
+                                    <input type="text" class="column-title" value="Fechamento"
+                                        data-original="Fechamento">
+                                    <span class="column-badge success">✓</span>
+                                    <button type="button" class="column-delete" title="Remover coluna">×</button>
+                                </div>
+                                <div class="column-description">Negócio concluído</div>
+                                <div class="column-drag-handle">⋮⋮</div>
+                            </div>
+                            <button type="button" class="add-column-btn" id="addColumnBtn">
+                                <span class="add-icon">+</span>
+                                <span>Adicionar Estágio</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="toggle-item featured glassmorphism">
+                            <div class="toggle-info">
+                                <h4>
+                                    <span class="label-icon">🤖</span>
+                                    Automação de Pipeline
+                                </h4>
+                                <p>A IA pode movimentar os leads automaticamente entre esses estágios?</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="autoPipeline">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 6: Infrastructure & Data -->
+                <section class="form-section" id="section6">
+                    <div class="section-header">
+                        <span class="section-number">06</span>
+                        <h2 class="section-title">Infraestrutura e Dados</h2>
+                        <p class="section-subtitle">Configure retenção de dados e método de envio</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">💾</span>
+                            Retenção de Dados
+                        </label>
+                        <p class="form-hint">Por quanto tempo as mensagens devem ser salvas no sistema?</p>
+
+                        <div class="radio-cards">
+                            <label class="radio-card">
+                                <input type="radio" name="dataRetention" value="3months">
+                                <span class="radio-custom"></span>
+                                <div class="radio-content">
+                                    <span class="radio-duration">3 meses</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="dataRetention" value="6months" checked>
+                                <span class="radio-custom"></span>
+                                <div class="radio-content">
+                                    <span class="radio-duration">6 meses</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="dataRetention" value="1year">
+                                <span class="radio-custom"></span>
+                                <div class="radio-content">
+                                    <span class="radio-duration">1 ano</span>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="dataRetention" value="indefinite">
+                                <span class="radio-custom"></span>
+                                <div class="radio-content">
+                                    <span class="radio-duration">Indeterminado</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">📨</span>
+                            Método de Envio (Massa)
+                        </label>
+                        <p class="form-hint">Para campanhas de final de ano, qual método prefere?</p>
+
+                        <div class="method-cards">
+                            <label class="method-card">
+                                <input type="radio" name="sendMethod" value="official" checked>
+                                <div class="method-content">
+                                    <div class="method-icon official">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                            <path d="M9 12l2 2 4-4" />
+                                        </svg>
+                                    </div>
+                                    <h4>API Oficial</h4>
+                                    <p>Seguro e estável</p>
+                                    <span class="method-tag paid">Pago</span>
+                                </div>
+                            </label>
+                            <label class="method-card">
+                                <input type="radio" name="sendMethod" value="unofficial">
+                                <div class="method-content">
+                                    <div class="method-icon unofficial">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <path d="M12 8v4M12 16h.01" />
+                                        </svg>
+                                    </div>
+                                    <h4>Não Oficial</h4>
+                                    <p>Risco de bloqueio</p>
+                                    <span class="method-tag free">Gratuito</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">✅</span>
+                            Verificação Meta Business
+                        </label>
+                        <p class="form-hint">Seu CNPJ já possui validação no Business Manager da Meta?</p>
+
+                        <div class="verification-options">
+                            <label class="verification-option">
+                                <input type="radio" name="metaVerification" value="yes">
+                                <span class="verification-custom"></span>
+                                <span class="verification-text">Sim</span>
+                            </label>
+                            <label class="verification-option">
+                                <input type="radio" name="metaVerification" value="no">
+                                <span class="verification-custom"></span>
+                                <span class="verification-text">Não</span>
+                            </label>
+                            <label class="verification-option">
+                                <input type="radio" name="metaVerification" value="unknown" checked>
+                                <span class="verification-custom"></span>
+                                <span class="verification-text">Não sei</span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Navigation Buttons -->
+                <div class="form-navigation">
+                    <button type="button" class="nav-btn prev-btn" id="prevBtn" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Anterior
+                    </button>
+                    <button type="button" class="nav-btn next-btn" id="nextBtn">
+                        Próximo
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                    <button type="submit" class="nav-btn submit-btn" id="submitBtn" style="display: none;">
+                        <span class="btn-text">Finalizar Configuração</span>
+                        <span class="btn-icon">🚀</span>
+                    </button>
+                </div>
+
+            </form>
+        </main>
+
+        <!-- Success Modal -->
+        <div class="modal-overlay" id="successModal">
+            <div class="modal-content">
+                <div class="success-animation">
+                    <svg class="checkmark" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                    </svg>
+                </div>
+                <h2>Configuração Concluída!</h2>
+                <p>Seu Agente IA está pronto para começar a trabalhar.</p>
+                <button type="button" class="modal-btn" onclick="closeModal()">Acessar Dashboard</button>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal-overlay" id="errorModal">
+            <div class="modal-content error-modal">
+                <div class="error-icon">❌</div>
+                <h2>Erro ao Salvar</h2>
+                <p id="errorMessage">Ocorreu um erro ao salvar suas configurações.</p>
+                <button type="button" class="modal-btn" onclick="closeErrorModal()">Tentar Novamente</button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+            <p>Salvando configurações...</p>
+        </div>
+
+    </div>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

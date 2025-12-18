@@ -646,6 +646,7 @@ function initFormSubmission() {
 }
 
 async function submitToSupabase(formData) {
+    // ⚠️ CRUCIAL: Usa a função exportada no config.js para pegar o cliente já inicializado
     const supabase = typeof getSupabaseClient === 'function' ? getSupabaseClient() : null;
 
     if (!supabase) {
@@ -690,8 +691,7 @@ async function submitToSupabase(formData) {
         meta_verification: formData.metaVerification || 'unknown',
 
         // Metadata
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        created_at: new Date().toISOString()
     };
 
     console.log('Submitting to Supabase:', payload);
@@ -860,7 +860,7 @@ function showNotification(message, type = 'info') {
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
         zIndex: '1001',
         display: 'flex',
-        alignItems: 'center',
+        align- items: 'center',
         gap: '12px',
         fontFamily: 'Inter, sans-serif',
         fontSize: '14px',
@@ -868,19 +868,19 @@ function showNotification(message, type = 'info') {
         animation: 'slideIn 0.3s ease'
     });
 
-    // Add close functionality
-    notification.querySelector('.notification-close').addEventListener('click', () => {
-        notification.remove();
-    });
+// Add close functionality
+notification.querySelector('.notification-close').addEventListener('click', () => {
+    notification.remove();
+});
 
-    // Add to DOM
-    document.body.appendChild(notification);
+// Add to DOM
+document.body.appendChild(notification);
 
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease forwards';
-        setTimeout(() => notification.remove(), 300);
-    }, 4000);
+// Auto remove after 4 seconds
+setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease forwards';
+    setTimeout(() => notification.remove(), 300);
+}, 4000);
 }
 
 // Add notification animations to document

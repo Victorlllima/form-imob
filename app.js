@@ -142,23 +142,22 @@ function initCardSelect() {
         const hiddenInput = container.nextElementSibling;
 
         cards.forEach(card => {
-            card.addEventListener('click', () => {
-                // Remove selection from all cards
+            card.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Remove selection from all cards in this container
                 cards.forEach(c => c.classList.remove('selected'));
 
                 // Add selection to clicked card
-                card.classList.add('selected');
+                this.classList.add('selected');
 
                 // Update hidden input
                 if (hiddenInput && hiddenInput.type === 'hidden') {
-                    hiddenInput.value = card.dataset.value;
+                    hiddenInput.value = this.dataset.value;
                 }
 
-                // Add subtle animation
-                card.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    card.style.transform = '';
-                }, 150);
+                console.log('Card selected:', this.dataset.value);
             });
         });
     });
@@ -216,14 +215,22 @@ function initFileUpload() {
     // Usa referência global ou inicia nova
     const files = window.uploadedFiles || [];
 
-    if (!dropZone || !fileInput) return;
+    if (!dropZone || !fileInput) {
+        console.error('File upload elements not found');
+        return;
+    }
 
-    // FIX: Força o clique no input oculto
-    dropZone.onclick = function (e) {
-        if (e.target !== fileInput && !e.target.classList.contains('remove-file')) {
-            fileInput.click();
+    console.log('✅ initFileUpload: Elements found', { dropZone, fileInput });
+
+    // FIX: Usa addEventListener com capture para garantir o clique
+    dropZone.addEventListener('click', function (e) {
+        // Ignora cliques no botão de remover arquivo
+        if (e.target.classList.contains('remove-file')) {
+            return;
         }
-    };
+        console.log('📁 DropZone clicked, opening file dialog...');
+        fileInput.click();
+    }, false);
 
     // Drag events visuais
     ['dragenter', 'dragover'].forEach(eventName => {

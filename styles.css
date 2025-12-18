@@ -1944,26 +1944,26 @@ body::before {
     line-height: 1.6;
 }
 
-/* Estilo para quando o card é selecionado */
-.select-card {
-    border: 2px solid transparent;
-    /* Reserva espaço para a borda */
-    transition: all 0.2s ease;
-    cursor: pointer;
+/* Estilo para quando o card é selecionado - OVERRIDE */
+.select-card.selected,
+.select-card-compact.selected {
+    border-color: #6366f1 !important;
+    background-color: rgba(99, 102, 241, 0.15) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
 }
 
-.select-card.selected {
-    border-color: #6366f1;
-    /* Cor Roxo Indigo (ajuste para a cor da sua marca) */
-    background-color: rgba(99, 102, 241, 0.1);
-    /* Fundo levemente roxo */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-}
-
-/* Garante que o input de arquivo esteja invisível mas exista */
+/* Input de arquivo - oculto mas funcional */
 #fileInput {
-    display: none;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
 }
 
 /* Garante que a zona de drop seja clicável */
@@ -1971,4 +1971,10 @@ body::before {
     cursor: pointer;
     position: relative;
     z-index: 10;
+}
+
+/* Hover específico para file-upload-zone */
+.file-upload-zone:hover {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.05);
 }

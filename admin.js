@@ -104,16 +104,16 @@ function showDemoData() {
             return_command: '/voltar',
             auto_scheduling: true,
             email_agenda: 'corretor@imobiliaria.com',
-            whatsapp_notificacao: '11999998888',
+            whatsapp_notification: '11999998888',
             neighborhoods: ['Centro', 'Noroeste', 'Asa Sul'],
             price_min: 300000,
             price_max: 1500000,
             triggers: ['human_request', 'exchange_interest', 'scheduling_request'],
-            outros_gatilhos: 'Cliente VIP',
+            other_triggers: 'Cliente VIP',
             followup_attempts: 3,
             hot_lead_timing: '15min',
             warm_lead_timing: '1day',
-            info_adicional_followup: 'Não enviar mensagens aos domingos',
+            additional_info_followup: 'Não enviar mensagens aos domingos',
             pipeline_stages: [
                 { order: 1, title: 'Lead Novo', description: 'Entrada via campanha' },
                 { order: 2, title: 'Em Qualificação', description: 'IA atuando' },
@@ -179,7 +179,7 @@ function renderRecords(records) {
                     <div class="record-section-title">📱 Contato</div>
                     <div class="record-field">
                         <div class="record-field-label">WhatsApp para Notificações</div>
-                        <div class="record-field-value phone">${formatPhone(record.whatsapp_notificacao)}</div>
+                        <div class="record-field-value phone">${formatPhone(record.whatsapp_notification)}</div>
                     </div>
                     <div class="record-field">
                         <div class="record-field-label">E-mail Agenda</div>

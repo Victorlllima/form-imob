@@ -652,7 +652,7 @@ async function submitToSupabase(formData) {
         throw new Error('Supabase client not initialized');
     }
 
-    // Map form data to database columns
+    // Map form data to database columns (English schema)
     const payload = {
         // Section 1: Identity & UX
         tone_of_voice: formData.toneOfVoice || null,
@@ -665,20 +665,20 @@ async function submitToSupabase(formData) {
         return_command: formData.returnCommand || null,
         auto_scheduling: formData.autoScheduling || false,
         email_agenda: formData.emailAgenda || null,
-        whatsapp_notificacao: formData.whatsappNotificacao || null,
+        whatsapp_notification: formData.whatsappNotificacao || null,
 
         // Section 3: Qualification & Overflow
         neighborhoods: formData.neighborhoods || [],
         price_min: formData.priceMin || null,
         price_max: formData.priceMax || null,
         triggers: formData.triggers || [],
-        outros_gatilhos: formData.outrosGatilhos || null,
+        other_triggers: formData.outrosGatilhos || null,
 
         // Section 4: Follow-up
         followup_attempts: formData.followupAttempts || 3,
         hot_lead_timing: formData.hotLeadTiming || '15min',
         warm_lead_timing: formData.warmLeadTiming || '1day',
-        info_adicional_followup: formData.infoAdicionalFollowup || null,
+        additional_info_followup: formData.infoAdicionalFollowup || null,
 
         // Section 5: Pipeline (stored as JSONB to preserve order)
         pipeline_stages: formData.pipelineStages || [],

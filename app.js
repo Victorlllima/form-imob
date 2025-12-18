@@ -138,13 +138,19 @@ function initCardSelect() {
     const cardSelects = document.querySelectorAll('.card-select');
 
     cardSelects.forEach(container => {
+        // Prevent duplicate initialization
+        if (container.dataset.initialized) return;
+        container.dataset.initialized = 'true';
+
         const cards = container.querySelectorAll('.select-card');
-        const hiddenInput = container.nextElementSibling;
+        const hiddenInput = container.parentElement.querySelector('input[type="hidden"]');
 
         cards.forEach(card => {
             card.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
+
+                console.log('Card clicked:', this.dataset.value);
 
                 // Remove selection from all cards in this container
                 cards.forEach(c => c.classList.remove('selected'));
@@ -153,11 +159,13 @@ function initCardSelect() {
                 this.classList.add('selected');
 
                 // Update hidden input
-                if (hiddenInput && hiddenInput.type === 'hidden') {
+                if (hiddenInput) {
                     hiddenInput.value = this.dataset.value;
+                    // Trigger change event for any listeners
+                    hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
 
-                console.log('Card selected:', this.dataset.value);
+                console.log('Card selection updated:', this.dataset.value);
             });
         });
     });
@@ -211,28 +219,32 @@ function toggleConditionalField(element, show) {
 function initFileUpload() {
     const dropZone = document.getElementById('fileDropZone');
     const fileInput = document.getElementById('fileInput');
-    const uploadedFiles = document.getElementById('uploadedFiles');
-    // Usa referência global ou inicia nova
-    const files = window.uploadedFiles || [];
+    const uploadedFilesContainer = document.getElementById('uploadedFiles');
 
     if (!dropZone || !fileInput) {
         console.error('File upload elements not found');
         return;
     }
 
-    console.log('✅ initFileUpload: Elements found', { dropZone, fileInput });
+    // Prevent duplicate initialization
+    if (dropZone.dataset.initialized) return;
+    dropZone.dataset.initialized = 'true';
 
-    // FIX: Usa addEventListener com capture para garantir o clique
+    // Garante que a lista global seja um array
+    if (!Array.isArray(window.uploadedFilesList)) {
+        window.uploadedFilesList = [];
+    }
+
+    console.log('✅ initFileUpload: Initializing...', { dropZone, fileInput });
+
+    // Click handler for opening dialog
     dropZone.addEventListener('click', function (e) {
-        // Ignora cliques no botão de remover arquivo
-        if (e.target.classList.contains('remove-file')) {
-            return;
-        }
+        if (e.target.closest('.remove-file')) return;
         console.log('📁 DropZone clicked, opening file dialog...');
         fileInput.click();
-    }, false);
+    });
 
-    // Drag events visuais
+    // Drag events
     ['dragenter', 'dragover'].forEach(eventName => {
         dropZone.addEventListener(eventName, (e) => {
             e.preventDefault();
@@ -265,43 +277,53 @@ function initFileUpload() {
     function handleFiles(newFiles) {
         const maxSize = 10 * 1024 * 1024; // 10MB
 
+        // Use a local let that explicitly refers to the global list to be safe
+        let currentList = window.uploadedFilesList;
+        if (!Array.isArray(currentList)) currentList = [];
+
         Array.from(newFiles).forEach(file => {
             if (file.size > maxSize) {
-                showNotification(`${file.name} excede 10MB`, 'error');
+                if (typeof showNotification === 'function') {
+                    showNotification(`${file.name} excede 10MB`, 'error');
+                } else {
+                    alert(`${file.name} excede 10MB`);
+                }
                 return;
             }
-            files.push(file);
+            currentList.push(file);
         });
 
+        window.uploadedFilesList = currentList;
         renderFiles();
-        // Atualiza variável global para o envio do formulário
-        window.uploadedFiles = files;
     }
 
     function renderFiles() {
-        if (!uploadedFiles) return;
+        if (!uploadedFilesContainer) return;
 
-        uploadedFiles.innerHTML = files.map((file, index) => `
-            <div class="file-tag" style="display: inline-flex; align-items: center; gap: 8px; background: #f3f4f6; padding: 4px 12px; border-radius: 16px; margin: 4px; font-size: 0.9em;">
+        const currentList = window.uploadedFilesList || [];
+
+        uploadedFilesContainer.innerHTML = currentList.map((file, index) => `
+            <div class="file-tag" style="display: inline-flex; align-items: center; gap: 8px; background: #f3f4f6; padding: 4px 12px; border-radius: 16px; margin: 4px; font-size: 0.9em; color: #333; border: 1px solid #ddd;">
                 <span>📄 ${file.name}</span>
-                <button type="button" class="remove-file" data-index="${index}" style="border:none; background:none; cursor:pointer; font-weight:bold; color: #666;">×</button>
+                <button type="button" class="remove-file" data-index="${index}" style="border:none; background:none; cursor:pointer; font-weight:bold; color: #ff4d4d; padding: 0 4px; font-size: 1.2em;">×</button>
             </div>
         `).join('');
 
-        // Re-adiciona eventos de remover (com stopPropagation para não abrir o upload)
-        uploadedFiles.querySelectorAll('.remove-file').forEach(btn => {
+        // Re-adiciona eventos de remover
+        uploadedFilesContainer.querySelectorAll('.remove-file').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const index = parseInt(e.target.dataset.index);
-                files.splice(index, 1);
-                renderFiles();
-                window.uploadedFiles = files;
+                if (window.uploadedFilesList[index]) {
+                    window.uploadedFilesList.splice(index, 1);
+                    renderFiles();
+                }
             });
         });
     }
 
-    // Inicializa
-    window.uploadedFiles = files;
+    // Initial render in case there are already files
+    renderFiles();
 }
 
 /* ============================================
